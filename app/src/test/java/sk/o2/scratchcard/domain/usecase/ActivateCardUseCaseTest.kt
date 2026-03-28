@@ -71,7 +71,9 @@ class ActivateCardUseCaseTest {
         coEvery { repository.activate("test-code") } returns Result.success(Unit)
 
         val job = launch { useCase() }
-        job.cancelAndJoin()
+        // Let the coroutine start and enter the NonCancellable block
+        advanceUntilIdle()
+        job.cancel()
         advanceUntilIdle()
 
         // The activate call should still have been made due to NonCancellable
